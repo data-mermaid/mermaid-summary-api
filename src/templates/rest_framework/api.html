@@ -1,0 +1,35 @@
+{% extends "rest_framework/base.html" %}
+{% block style %}
+{{ block.super }}
+<style>
+  .navbar-brand {
+    height: 30px;
+    padding: 5px 15px 5px 15px;
+  }
+  .navbar-brand-sub {
+    color: #9d9d9d;
+    float: left;
+    height: 20px;
+    padding: 0;
+    font-size: 12px;
+  }
+  .navbar-brand-sub:hover, .navbar-brand-sub:focus {
+    color: white;
+    text-decoration: none;
+  }
+</style>
+{% endblock %}
+
+{% block title %}MERMAID Summary REST API{% endblock %}
+{% block branding %}
+<a class='navbar-brand' rel="nofollow" href="{% url 'api-root' %}">MERMAID Summary API&nbsp;&nbsp;|</a>
+<a class='navbar-brand' rel="nofollow" href='https://www.django-rest-framework.org' target="_blank">
+  Django REST framework <span class="version">{{ version }}</span>
+</a>
+<div class="clearfix"></div>
+<a class='navbar-brand-sub' rel="nofollow" href="{% url 'schema-swagger-ui' %}" target="_blank">Documentation&nbsp;&nbsp;|</a>
+<a class='navbar-brand-sub' rel="nofollow" href="https://github.com/WildlifeConservationSocietyCI/mermaid-summary-api" target="_blank">&nbsp;&nbsp;Code&nbsp;&nbsp;|</a>
+<a class='navbar-brand-sub' rel="nofollow" href="https://api.datamermaid.org/v1/" target="_blank">&nbsp;&nbsp;Authenticated API&nbsp;&nbsp;|</a>
+<a class='navbar-brand-sub' rel="nofollow" href="https://collect.datamermaid.org" target="_blank">&nbsp;&nbsp;Collect&nbsp;&nbsp;|</a>
+<a class='navbar-brand-sub' rel="nofollow" href="https://datamermaid.org" target="_blank">&nbsp;&nbsp;Project</a>
+{% endblock %}

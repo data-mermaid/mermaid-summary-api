@@ -1,0 +1,44 @@
+{
+    "dev": {
+        "django_settings": "app.settings",
+        "project_name": "mermaid-summary-api",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-mermaid-summary-api-dev",
+        "vpc_config": {
+            "SubnetIds": [
+            ],
+            "SecurityGroupIds": [
+            ]
+        },
+        "certificate_arn": "",
+        "domain": "",
+        "cors": true,
+        "events": [
+            {
+                "function": "crons.refresh_sites",
+                "expression": "rate(60 minutes)"
+            }
+        ]
+    },
+    "prod": {
+        "django_settings": "app.settings",
+        "project_name": "mermaid-summary-api",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-mermaid-summary-api-prod",
+        "vpc_config": {
+            "SubnetIds": [
+            ],
+            "SecurityGroupIds": [
+            ]
+        },
+        "certificate_arn": "",
+        "domain": "",
+        "cors": true,
+        "events": [
+            {
+                "function": "crons.refresh_sites",
+                "expression": "rate(60 minutes)"
+            }
+        ]
+    }
+}

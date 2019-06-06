@@ -1,0 +1,21 @@
+version: "3.7"
+
+networks:
+  default:
+    external:
+      name: mermaid-api_default
+
+services:
+
+  summary_api_build:
+    container_name: summary_api_build
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: summary_api_build:latest
+    volumes:
+      - ${PWD}/src:/var/task
+    ports:
+      - 8081:8000
+    env_file:
+      - .env

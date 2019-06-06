@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "4239c251-afec-47ac-955e-54ba48858711",
+		"name": "Mermaid Summary API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8081/v1/sites/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8081/v1/sites/?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"sites",
+						""
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"disabled": true
+						},
+						{
+							"key": "geometry",
+							"value": "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[179.044189453125, -18.280866245832026], [179.6587371826172, -18.280866245832026], [179.6587371826172, -17.728412648167435], [179.044189453125, -17.728412648167435], [179.044189453125, -18.280866245832026]]]]}",
+							"disabled": true
+						},
+						{
+							"key": "tag_name",
+							"value": "Wildlife Conservation Society",
+							"disabled": true
+						},
+						{
+							"key": "project_id",
+							"value": "2c56b92b-ba1c-491f-8b62-23b1dc728890",
+							"disabled": true
+						},
+						{
+							"key": "date_max_before",
+							"value": "2018-04-16",
+							"disabled": true
+						},
+						{
+							"key": "management_regime_id",
+							"value": "cc08d0d7-5870-497e-b366-7f1c07d9cf5e",
+							"disabled": true
+						},
+						{
+							"key": "tag_id",
+							"value": "62fbd042-4241-4b41-81fc-5f4382f3c3a8",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Site-level aggregated observation data, accessible via GET or POST (for long queries)"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8081/v1/sites/",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"tag_name\": \"Wildlife Conservation Society\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/v1/sites/?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"sites",
+						""
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"disabled": true
+						},
+						{
+							"key": "geometry",
+							"value": "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[179.044189453125, -18.280866245832026], [179.6587371826172, -18.280866245832026], [179.6587371826172, -17.728412648167435], [179.044189453125, -17.728412648167435], [179.044189453125, -18.280866245832026]]]]}",
+							"disabled": true
+						},
+						{
+							"key": "tag_name",
+							"value": "Wildlife Conservation Society",
+							"disabled": true
+						},
+						{
+							"key": "project_id",
+							"value": "2c56b92b-ba1c-491f-8b62-23b1dc728890",
+							"disabled": true
+						},
+						{
+							"key": "date_max_before",
+							"value": "2018-04-16",
+							"disabled": true
+						},
+						{
+							"key": "management_regime_id",
+							"value": "cc08d0d7-5870-497e-b366-7f1c07d9cf5e",
+							"disabled": true
+						},
+						{
+							"key": "tag_id",
+							"value": "62fbd042-4241-4b41-81fc-5f4382f3c3a8",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
