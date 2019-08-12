@@ -25,6 +25,8 @@ versions of Python and Django (and libraries). Until we upgrade mermaid-api (and
 `zappa update dev`  
 `zappa update prod`  
 `zappa manage dev "migrate summary_api"`  
+Use  local zapp environment to run collectstatic, i.e. `python manage.py collectstatic --noinput`  (`zappa manage dev
+ "collectstatic --noinput"` timing out currently)  
 For zappa deployment operations to work, the appropriate settings must be set in `/src/zappa_settings.json`. See the 
 template in that directory, [zappa documentation](https://github.com/Miserlou/Zappa), and [this helpful django-zappa 
 guide](https://romandc.com/zappa-django-guide/) for details. 

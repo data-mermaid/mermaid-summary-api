@@ -1,5 +1,4 @@
-import time
-from fabric.api import local
+from invoke import task, run
 
 
 # HELPER FUNCTIONS
@@ -10,49 +9,60 @@ def _api_cmd(cmd):
 
 # FABRIC COMMANDS
 
-def build():
-    local("docker-compose build")
+@task
+def build(c):
+    run("docker-compose build", pty=True)
 
 
-def build_nocache():
-    local("docker-compose build --no-cache")
+@task
+def build_nocache(c):
+    run("docker-compose build --no-cache", pty=True)
 
 
-def up():
-    local("docker-compose up -d")
+@task
+def up(c):
+    run("docker-compose up -d", pty=True)
 
 
-def down():
-    local("docker-compose down")
+@task
+def down(c):
+    run("docker-compose down", pty=True)
 
 
-def runserver():
-    local(_api_cmd("python manage.py runserver 0.0.0.0:8000"))
+@task
+def runserver(c):
+    run(_api_cmd("python manage.py runserver 0.0.0.0:8000"), pty=True)
 
 
-def makemigrations():
-    local(_api_cmd("python manage.py makemigrations summary_api"))
+@task
+def makemigrations(c):
+    run(_api_cmd("python manage.py makemigrations summary_api"), pty=True)
 
 
-def migrate():
-    local(_api_cmd("python manage.py migrate summary_api"))
+@task
+def migrate(c):
+    run(_api_cmd("python manage.py migrate summary_api"), pty=True)
 
 
-def refresh_view(viewname=None):
+@task
+def refresh_view(c, viewname=None):
     viewname = viewname or 'vw_summary_site'
-    local(_api_cmd("python manage.py refresh_view {}".format(viewname)))
+    run(_api_cmd("python manage.py refresh_view {}".format(viewname)), pty=True)
 
 
-def shell_plus():
-    local(_api_cmd("python manage.py shell_plus"))
+@task
+def shell_plus(c):
+    run(_api_cmd("python manage.py shell_plus"), pty=True)
 
 
-def shell():
-    local("docker exec -it summary_api_build /bin/bash")
+@task
+def shell(c):
+    run("docker exec -it summary_api_build /bin/bash", pty=True)
 
 
-def fresh_install():
-    down()
-    build()
-    up()
-    migrate()
+@task
+def fresh_install(c):
+    down(c)
+    build(c)
+    up(c)
+    migrate(c)
