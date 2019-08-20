@@ -160,11 +160,14 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
     filterset_class = SummarySiteFilterSet
 
     def get_queryset(self):
+        return SummarySiteView.objects.exclude(
+            project_status=SummarySiteView.TEST
+        ).filter(
+            tags__0__name__icontains="WCS Fiji"
+        ).order_by('project_name', 'site_name')
         # return SummarySiteView.objects.exclude(
         #     project_status=SummarySiteView.TEST
         # ).order_by('project_name', 'site_name')
-        return SummarySiteView.objects.filter(project_id='2c56b92b-ba1c-491f-8b62-23b1dc728890').order_by(
-            'project_name', 'site_name')
 
     geometry_example = """
     {"geometry": {"type": "MultiPolygon", "coordinates": [[[[179.044189453125, -18.280866245832026], 
