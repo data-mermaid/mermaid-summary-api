@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from rest_framework import viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -161,7 +162,8 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         return SummarySiteView.objects.exclude(
-            project_status=SummarySiteView.TEST
+            Q(project_status=SummarySiteView.TEST)
+            | Q(management_regimes__isnull=True)
         ).filter(
             tags__0__name__icontains="WCS Fiji"
         ).order_by('project_name', 'site_name')
@@ -223,7 +225,8 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                     with site. 
                         {
                             "id": "7d944a52-2174-4221-b0e0-5c9bdc59188b",
-                            "name": "Bronx Zoo"
+                            "name": "Bronx Zoo",
+                            "notes": "Test Bronx Zoo management regime"
                         }
                     ],
                     "protocols": {
