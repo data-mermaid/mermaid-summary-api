@@ -160,6 +160,7 @@ class SummarySiteSerializer(GeoFeatureModelSerializer):
     data_policy_benthiclit = CharField(required=False)
     data_policy_benthicpit = CharField(required=False)
     data_policy_habitatcomplexity = CharField(required=False)
+    data_policy_bleachingqc = CharField(required=False)
     reef_type = CharField(required=False)
     reef_zone = CharField(required=False)
     exposure = CharField(required=False)
@@ -180,7 +181,7 @@ class SummarySiteSerializer(GeoFeatureModelSerializer):
         fields = ['site_id', 'site_name', 'site_notes', 'project_id', 'project_name', 'project_notes',
                   'country_name', 'contact_link',
                   'data_policy_beltfish', 'data_policy_benthiclit',
-                  'data_policy_benthicpit', 'data_policy_habitatcomplexity',
+                  'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc',
                   'reef_type', 'reef_zone',
                   'exposure', 'tags', 'project_admins', 'date_min', 'date_max', 'depth',
                   'management_regimes', 'protocols']

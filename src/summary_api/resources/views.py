@@ -72,7 +72,7 @@ class SummarySiteFilterSet(filters.FilterSet):
         model = SummarySiteView
         fields = ['site_id', 'site_name', 'project_id', 'project_name',
                   'data_policy_beltfish', 'data_policy_benthiclit',
-                  'data_policy_benthicpit', 'data_policy_habitatcomplexity',
+                  'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc',
                   'country_name', 'tag_id', 'tag_name', 'management_regime_id', 'management_regime_name', 'geometry',
                   'date_min', 'date_max']
 
@@ -127,6 +127,8 @@ class SummarySiteFilterInspector(CoreAPICompatInspector):
                                   'or public',
         'data_policy_habitatcomplexity': 'data policy chosen for project habitat complexity transects: private, '
                                          'public summary, or public',
+        'data_policy_bleachingqc': 'data policy chosen for project bleaching quadrat collections: private, '
+                                   'public summary, or public',
         'country_name': 'Name of a country; matching is done with case-insensitive "contains"',
         'tag_id': 'uuid of a tag',
         'tag_name': 'Name of a tag associated with projects; matching is done with case-insensitive "contains". '
@@ -195,12 +197,12 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                     "project_name": "Bronx River",
                     "project_notes": "This is a project about the Great Bronx River Reef.",
                     "country_name": "United States",
-                    "contact_link": "https://api.datamermaid.org/contact_project?project_id=2c56b92b-ba1c-491f-8b62
-                    -23b1dc728890",
+                    "contact_link": "https://datamermaid.org/contact-project/?project_id=project_id=2c56b92b-ba1c-491f-8b62-23b1dc728890",
                     "data_policy_beltfish": "public summary",
                     "data_policy_benthiclit": "public summary",
                     "data_policy_benthicpit": "public summary",
                     "data_policy_habitatcomplexity": "public summary",
+                    "data_policy_bleachingqc": "public summary",
                     "reef_type": "lagoon",
                     "reef_zone": "back reef",
                     "exposure": "very sheltered",
@@ -231,11 +233,31 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                     ],
                     "protocols": {
                         "beltfish": {
-                            "biomass_avg": 421.36301516934896,  // omitted if project_data_policy = "private"
-                            "sample_unit_count": 3
+                            "biomass_kgha": 248.0,  // omitted if data_policy_beltfish = "private"	
+                            "biomass_kgha_tg": [  // omitted if data_policy_beltfish = "private"
+                                {
+                                    "omnivore": 39.5
+                                },
+                                {
+                                    "invertivore-mobile": 2.4
+                                },
+                                {
+                                    "herbivore-macroalgae": 7.2
+                                },
+                                {
+                                    "herbivore-detritivore": 131.2
+                                },
+                                {
+                                    "planktivore": 2.8
+                                },
+                                {
+                                    "piscivore": 64.8
+                                }
+                            ],
+                            "sample_unit_count": 6
                         },
                         "benthiclit": {
-                            "coral_cover": [  // omitted if project_data_policy = "private"	
+                            "coral_cover": [  // omitted if data_policy_benthiclit = "private"	
                                 {	
                                     "Fleshy macroalgae": 0.3
                                 },	
@@ -246,7 +268,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                             "sample_unit_count": 1
                         },
                         "benthicpit": {
-                            "coral_cover": [  // omitted if project_data_policy = "private"
+                            "coral_cover": [  // omitted if data_policy_benthicpit = "private"
                                 {
                                     "Turf algae": 0.7
                                 },
@@ -257,7 +279,24 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                             "sample_unit_count": 1
                         },
                         "habitatcomplexity": {
-                            "score_avg": 2.5,  // omitted if project_data_policy = "private"
+                            "score_avg": 2.5,  // omitted if data_policy_habitatcomplexity = "private"
+                            "sample_unit_count": 1
+                        },
+                        "colonies_bleached": {  // all properties except "sample_unit_count" omitted if 
+                        data_policy_bleachingqc = "private"
+                            "avg_count_total": 236.0,
+                            "avg_count_genera": 22.0,
+                            "avg_percent_pale": 19.0,
+                            "sample_unit_count": 1,
+                            "avg_percent_normal": 76.0,
+                            "avg_percent_bleached": 4.0
+                        },
+                        "quadrat_benthic_percent": {  // all properties except "sample_unit_count" omitted if 
+                        data_policy_bleachingqc = "private"
+                            "avg_percent_hard": 23.8,
+                            "avg_percent_soft": 14.3,
+                            "avg_percent_algae": 7.5,
+                            "avg_quadrat_count": 20.0,
                             "sample_unit_count": 1
                         }
                     }
@@ -293,9 +332,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
 
     list_response = """
     All responses are currently returned in GeoJSON format, as Features or FeatureCollections. Below is a template 
-    response, with annotations (not valid json). Special notes:
-    - "contact_link": This uri will provide functionality to email the administrators of the requested project, 
-    but this functionality is not yet available.
+    response, with annotations (not valid json).
     - "protocols" - This is a list of all protocols surveyed at this site; if a particular protocol was not 
     employed, it will not be in the list. If however a protocol was employed but returned no observations, 
     the protocol will be listed with a summary metric (e.g. "biomass_avg" for "beltfish") of 0.
@@ -356,6 +393,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
             'data_policy_benthiclit': Schema(type='string', enum=['private', 'public summary', 'public']),
             'data_policy_benthicpit': Schema(type='string', enum=['private', 'public summary', 'public']),
             'data_policy_habitatcomplexity': Schema(type='string', enum=['private', 'public summary', 'public']),
+            'data_policy_bleachingqc': Schema(type='string', enum=['private', 'public summary', 'public']),
             'management_regime_id': Schema(type='string', format='uuid',
                                            description='query for any site associated with a sample unit '
                                                        'associated with this management regime'),
