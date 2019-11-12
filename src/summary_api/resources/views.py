@@ -166,12 +166,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
         return SummarySiteView.objects.exclude(
             Q(project_status=SummarySiteView.TEST)
             | Q(management_regimes__isnull=True)
-        ).filter(
-            tags__0__name__icontains="WCS Fiji"
         ).order_by('project_name', 'site_name')
-        # return SummarySiteView.objects.exclude(
-        #     project_status=SummarySiteView.TEST
-        # ).order_by('project_name', 'site_name')
 
     geometry_example = """
     {"geometry": {"type": "MultiPolygon", "coordinates": [[[[179.044189453125, -18.280866245832026], 
