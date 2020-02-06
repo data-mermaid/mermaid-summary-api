@@ -154,6 +154,7 @@ class SummarySiteSerializer(GeoFeatureModelSerializer):
     site_name = CharField(required=False)
     project_id = UUIDField(required=False)
     project_name = CharField(required=False)
+    country_id = UUIDField(required=False)
     country_name = CharField(required=False)
     contact_link = CharField(required=False)
     data_policy_beltfish = CharField(required=False)
@@ -179,7 +180,7 @@ class SummarySiteSerializer(GeoFeatureModelSerializer):
         geo_field = 'point'
         coord_precision = 6  # to nearest 10cm
         fields = ['site_id', 'site_name', 'site_notes', 'project_id', 'project_name', 'project_notes',
-                  'country_name', 'contact_link',
+                  'country_id', 'country_name', 'contact_link',
                   'data_policy_beltfish', 'data_policy_benthiclit',
                   'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc',
                   'reef_type', 'reef_zone',

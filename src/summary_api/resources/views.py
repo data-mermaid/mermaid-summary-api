@@ -59,10 +59,14 @@ class GeoJsonPagination(PageNumberPagination):
 
 
 class SummarySiteFilterSet(filters.FilterSet):
-    tag_id = filters.UUIDFilter(field_name='tags', method='tag_by_id')
-    tag_name = filters.CharFilter(field_name='tags', method='tag_by_name')
-    management_regime_id = filters.UUIDFilter(field_name='management_regimes', method='mr_by_id')
-    management_regime_name = filters.CharFilter(field_name='management_regimes', method='mr_by_name')
+    project_id = filters.BaseInFilter(method='str_or_lookup')
+    project_name = filters.BaseInFilter(method="name_lookup")
+    country_id = filters.BaseInFilter(method='str_or_lookup')
+    country_name = filters.BaseInFilter(method="name_lookup")
+    tag_id = filters.BaseInFilter(field_name='tags', method='json_id_lookup')
+    tag_name = filters.BaseInFilter(field_name='tags', method='json_name_lookup')
+    management_regime_id = filters.BaseInFilter(field_name='management_regimes', method='json_id_lookup')
+    management_regime_name = filters.BaseInFilter(field_name='management_regimes', method='json_name_lookup')
     geometry = filters.CharFilter(method='site_by_multipoly')
     date_min = filters.DateFromToRangeFilter()
     date_max = filters.DateFromToRangeFilter()
@@ -72,7 +76,7 @@ class SummarySiteFilterSet(filters.FilterSet):
         model = SummarySiteView
         fields = ['site_id', 'site_name', 'project_id', 'project_name',
                   'data_policy_beltfish', 'data_policy_benthiclit',
-                  'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc',
+                  'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc', "country_id",
                   'country_name', 'tag_id', 'tag_name', 'management_regime_id', 'management_regime_name', 'geometry',
                   'date_min', 'date_max']
 
@@ -85,18 +89,25 @@ class SummarySiteFilterSet(filters.FilterSet):
             },
         }
 
-    def tag_by_id(self, queryset, name, value):
-        # pk = check_uuid(value)
-        return queryset.filter(tags__0__id=str(value))
+    def str_or_lookup(self, queryset, name, value):
+        q = Q()
+        for v in set(value):
+            if v is not None and v != "":
+                predicate = {name: str(v).strip()}
+                q |= Q(**predicate)
+        return queryset.filter(q).distinct()
 
-    def tag_by_name(self, queryset, name, value):
-        return queryset.filter(tags__0__name__icontains=value)
+    def json_id_lookup(self, queryset, name, value):
+        fieldname = "{}__0__id".format(name)
+        return self.str_or_lookup(queryset, fieldname, value)
 
-    def mr_by_id(self, queryset, name, value):
-        return queryset.filter(management_regimes__0__id=str(value))
+    def name_lookup(self, queryset, name, value):
+        fieldname = "{}__icontains".format(name)
+        return self.str_or_lookup(queryset, fieldname, value)
 
-    def mr_by_name(self, queryset, name, value):
-        return queryset.filter(management_regimes__0__name__icontains=value)
+    def json_name_lookup(self, queryset, name, value):
+        fieldname = "{}__0__name__icontains".format(name)
+        return self.str_or_lookup(queryset, fieldname, value)
 
     def site_by_multipoly(self, queryset, name, value):
         poly = valid_poly(value)
@@ -118,7 +129,7 @@ class SummarySiteFilterInspector(CoreAPICompatInspector):
     field_descriptions = {
         'site_id': 'uuid of a site',
         'site_name': 'Name of a site; matching is done with case-insensitive "contains"',
-        'project_id': 'uuid of a project',
+        'project_id': 'uuid of a project; accepts multiple comma-separated values',
         'project_name': 'Name of a project; matching is done with case-insensitive "contains"',
         'data_policy_beltfish': 'data policy chosen for project beltfish transects: private, public summary, or public',
         'data_policy_benthiclit': 'data policy chosen for project benthic LIT transects: private, public summary, '
@@ -129,11 +140,12 @@ class SummarySiteFilterInspector(CoreAPICompatInspector):
                                          'public summary, or public',
         'data_policy_bleachingqc': 'data policy chosen for project bleaching quadrat collections: private, '
                                    'public summary, or public',
+        'country_id': 'uuid of a country; accepts multiple comma-separated values',
         'country_name': 'Name of a country; matching is done with case-insensitive "contains"',
-        'tag_id': 'uuid of a tag',
+        'tag_id': 'uuid of a tag; accepts multiple comma-separated values',
         'tag_name': 'Name of a tag associated with projects; matching is done with case-insensitive "contains". '
                     'Example: Wildlife Conservation Society',
-        'management_regime_id': 'uuid of a management regime',
+        'management_regime_id': 'uuid of a management regime; accepts multiple comma-separated values',
         'management_regime_name': 'Name of a management regime; matching is done with case-insensitive "contains"',
         'geometry': 'GeoJSON Polygon or MultiPolygon containing sites.\nFor details on geojson polygon and '
                     'multipolygon geometry formatting: https://tools.ietf.org/html/rfc7946#section-3.1.6 and '
@@ -191,6 +203,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
                     "project_id": "2c56b92b-ba1c-491f-8b62-23b1dc728890",
                     "project_name": "Bronx River",
                     "project_notes": "This is a project about the Great Bronx River Reef.",
+                    "country_id": "f0835b1f-4e80-449b-a78e-4d2e93690e27",
                     "country_name": "United States",
                     "contact_link": "https://datamermaid.org/contact-project/?project_id=project_id=2c56b92b-ba1c-491f-8b62-23b1dc728890",
                     "data_policy_beltfish": "public summary",
@@ -381,6 +394,7 @@ class SummarySiteViewSet(mixins.CreateModelMixin,
             'site_name': Schema(type='string'),
             'project_id': Schema(type='string', format='uuid'),
             'project_name': Schema(type='string'),
+            'country_id': Schema(type='string', format='uuid'),
             'country_name': Schema(type='string'),
             'date_min': Schema(type='string', format='date'),
             'date_max': Schema(type='string', format='date'),
