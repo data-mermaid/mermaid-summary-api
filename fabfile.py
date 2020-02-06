@@ -31,7 +31,7 @@ def down(c):
 
 @task
 def runserver(c):
-    run(_api_cmd("python manage.py runserver 0.0.0.0:8000"), pty=True)
+    run(_api_cmd("python manage.py runserver 0.0.0.0:8081"), pty=True)
 
 
 @task

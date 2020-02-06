@@ -29,6 +29,7 @@ class SummarySiteView(models.Model):
     data_policy_habitatcomplexity = models.CharField(max_length=50)
     data_policy_bleachingqc = models.CharField(max_length=50)
     contact_link = models.CharField(max_length=255)
+    country_id = models.UUIDField()
     country_name = models.CharField(max_length=50)
     reef_type = models.CharField(max_length=50)
     reef_zone = models.CharField(max_length=50)
