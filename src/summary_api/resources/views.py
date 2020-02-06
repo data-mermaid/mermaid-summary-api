@@ -89,11 +89,11 @@ class SummarySiteFilterSet(filters.FilterSet):
             },
         }
 
-    def str_or_lookup(self, queryset, fieldname, value):
+    def str_or_lookup(self, queryset, name, value):
         q = Q()
         for v in set(value):
             if v is not None and v != "":
-                predicate = {fieldname: str(v).strip()}
+                predicate = {name: str(v).strip()}
                 q |= Q(**predicate)
         return queryset.filter(q).distinct()
 
