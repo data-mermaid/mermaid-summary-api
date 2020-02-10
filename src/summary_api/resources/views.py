@@ -59,14 +59,15 @@ class GeoJsonPagination(PageNumberPagination):
 
 
 class SummarySiteFilterSet(filters.FilterSet):
-    project_id = filters.BaseInFilter(method='str_or_lookup')
-    project_name = filters.BaseInFilter(method="name_lookup")
-    country_id = filters.BaseInFilter(method='str_or_lookup')
-    country_name = filters.BaseInFilter(method="name_lookup")
+    project_id = filters.BaseInFilter(method='id_lookup')
+    project_name = filters.BaseInFilter(method="char_lookup")
+    country_id = filters.BaseInFilter(method='id_lookup')
+    country_name = filters.BaseInFilter(method="char_lookup")
     tag_id = filters.BaseInFilter(field_name='tags', method='json_id_lookup')
-    tag_name = filters.BaseInFilter(field_name='tags', method='json_name_lookup')
+    tag_name = filters.BaseInFilter(field_name="tags", method="json_name_lookup")
     management_regime_id = filters.BaseInFilter(field_name='management_regimes', method='json_id_lookup')
     management_regime_name = filters.BaseInFilter(field_name='management_regimes', method='json_name_lookup')
+    project_admins = filters.BaseInFilter(method="json_name_lookup")
     geometry = filters.CharFilter(method='site_by_multipoly')
     date_min = filters.DateFromToRangeFilter()
     date_max = filters.DateFromToRangeFilter()
@@ -74,7 +75,7 @@ class SummarySiteFilterSet(filters.FilterSet):
 
     class Meta:
         model = SummarySiteView
-        fields = ['site_id', 'site_name', 'project_id', 'project_name',
+        fields = ['site_id', 'site_name', 'project_id', 'project_name', 'project_admins',
                   'data_policy_beltfish', 'data_policy_benthiclit',
                   'data_policy_benthicpit', 'data_policy_habitatcomplexity', 'data_policy_bleachingqc', "country_id",
                   'country_name', 'tag_id', 'tag_name', 'management_regime_id', 'management_regime_name', 'geometry',
@@ -89,25 +90,31 @@ class SummarySiteFilterSet(filters.FilterSet):
             },
         }
 
-    def str_or_lookup(self, queryset, name, value):
+    def str_or_lookup(self, queryset, name, value, key=None, lookup_expr="iexact"):
+        if not isinstance(name, (list, set, tuple)):
+            name = [name]
         q = Q()
-        for v in set(value):
-            if v is not None and v != "":
-                predicate = {name: str(v).strip()}
-                q |= Q(**predicate)
+        for n in name:
+            fieldname = "{}__{}".format(n, lookup_expr)
+            for v in set(value):
+                if v is not None and v != "":
+                    predicate = {fieldname: str(v).strip()}
+                    if key is not None:
+                        predicate = {fieldname: [{key: str(v).strip()}]}
+                    q |= Q(**predicate)
         return queryset.filter(q).distinct()
 
-    def json_id_lookup(self, queryset, name, value):
-        fieldname = "{}__0__id".format(name)
-        return self.str_or_lookup(queryset, fieldname, value)
+    def id_lookup(self, queryset, name, value):
+        return self.str_or_lookup(queryset, name, value)
 
-    def name_lookup(self, queryset, name, value):
-        fieldname = "{}__icontains".format(name)
-        return self.str_or_lookup(queryset, fieldname, value)
+    def char_lookup(self, queryset, name, value):
+        return self.str_or_lookup(queryset, name, value, lookup_expr="icontains")
+
+    def json_id_lookup(self, queryset, name, value):
+        return self.str_or_lookup(queryset, name, value, "id", "contains")
 
     def json_name_lookup(self, queryset, name, value):
-        fieldname = "{}__0__name__icontains".format(name)
-        return self.str_or_lookup(queryset, fieldname, value)
+        return self.str_or_lookup(queryset, name, value, "name", "contains")
 
     def site_by_multipoly(self, queryset, name, value):
         poly = valid_poly(value)
