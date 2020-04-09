@@ -17,7 +17,7 @@ from .serializers import *
 class GeoJsonPagination(PageNumberPagination):
     page_size = 100
     page_size_query_param = 'limit'
-    max_page_size = 1000
+    max_page_size = 5000
 
     def paginate_queryset(self, queryset, request, view=None):
         if not request.query_params._mutable:
