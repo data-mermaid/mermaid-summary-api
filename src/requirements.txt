@@ -1,6 +1,6 @@
 django-cors-headers==3.0.2
 django-s3-storage==0.12.4
-django==2.2.8
+django==2.2.13
 django_extensions==2.1.9
 django_filter==2.2.0
 djangorestframework==3.10.1
