@@ -1,3 +1,5 @@
+# ARCHIVED -- FUNCTIONALITY ROLLED INTO BASE MERMAID API
+
 # mermaid-summary-api
 ##Unauthenticated read-only aggregated MERMAID data API
 ## Setup notes
