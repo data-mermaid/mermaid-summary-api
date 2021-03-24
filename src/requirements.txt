@@ -3,7 +3,7 @@ django-s3-storage==0.12.4
 django==2.2.18
 django_extensions==2.1.9
 django_filter==2.2.0
-djangorestframework==3.10.1
+djangorestframework==3.11.2
 drf-yasg==1.16.1
 geojson==2.4.1
 packaging
